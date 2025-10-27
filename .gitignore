@@ -19,3 +19,4 @@ upload_to_hf.py
 
 *.png
 *.npz
+*.pt

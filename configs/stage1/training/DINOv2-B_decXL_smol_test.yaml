@@ -8,28 +8,26 @@ stage_1:
       dinov2_path: 'facebook/dinov2-with-registers-base'
       normalize: true
     decoder_config_path: 'configs/decoder/ViTXL'
-    noise_tau: 0.8 # training 0.8, at inference time always set to 0
+    noise_tau: 0.8
     reshape_to_2d: true
-    #normalization_stat_path: 'models/stats/dinov2/wReg_base/imagenet1k/stat.pt'
-
 
 training:
-  epochs: 3
+  epochs: 1                    # Changed: 3 -> 1 epoch for quick testing
   ema_decay: 0.9978
-  batch_size: 8 # per-proc bs --> make sure total bs is 512
-  num_workers: 8
+  batch_size: 2                # Changed: 8 -> 2 (smaller batch for faster iteration)
+  num_workers: 2               # Changed: 8 -> 2 (less CPU overhead)
   clip_grad: 0.0
-  log_interval: 100
-  checkpoint_interval: 5000
-  sample_interval: 0
+  log_interval: 10             # Changed: 100 -> 10 (more frequent logging)
+  checkpoint_interval: 100     # Changed: 5000 -> 100 (save checkpoints more often)
+  sample_interval: 50          # Changed: 0 -> 50 (generate samples during training)
   optimizer:
     lr: 2.0e-4
     betas: [0.5, 0.9]
     weight_decay: 0.0
   scheduler:
     type: cosine
-    warmup_epochs: 1
-    decay_end_epoch: 16
+    warmup_epochs: 0           # Changed: 1 -> 0 (no warmup for short runs)
+    decay_end_epoch: 1         # Changed: 16 -> 1 (match total epochs)
     base_lr: 2.0e-4
     final_lr: 2.0e-5
 
@@ -47,8 +45,8 @@ gan:
       weight_decay: 0.0
     scheduler:
       type: cosine
-      warmup_epochs: 1
-      decay_end_epoch: 16
+      warmup_epochs: 0         # Changed: 1 -> 0
+      decay_end_epoch: 1       # Changed: 16 -> 1
       base_lr: 2.0e-4
       final_lr: 2.0e-5
     augment:
@@ -59,8 +57,8 @@ gan:
     gen_loss: vanilla
     disc_weight: 0.75
     perceptual_weight: 1.0
-    disc_start: 8
-    disc_upd_start: 6
+    disc_start: 0              # Changed: 8 -> 0 (start discriminator immediately)
+    disc_upd_start: 0          # Changed: 6 -> 0 (start discriminator updates immediately)
     lpips_start: 0
     max_d_weight: 10000.0
     disc_updates: 1
