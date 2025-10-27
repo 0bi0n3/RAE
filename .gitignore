@@ -13,3 +13,9 @@ __pycache__/
 /checkpoints/
 upload_to_hf.py
 /*.png
+
+# keep secrets out of the repo
+.env
+
+*.png
+*.npz
