@@ -8,7 +8,7 @@ stage_1:
       dinov2_path: 'facebook/dinov2-with-registers-base'
       normalize: true
     decoder_config_path: 'configs/decoder/ViTXL'
-    noise_tau: 0.8
+    noise_tau: 0.0
     reshape_to_2d: true
 
 training:
