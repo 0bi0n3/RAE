@@ -4,9 +4,12 @@ stage_1:
     encoder_cls: 'Dinov2withNorm'
     encoder_config_path: 'facebook/dinov2-with-registers-base'
     encoder_input_size: 224
-    encoder_params: {'dinov2_path': 'facebook/dinov2-with-registers-base', 'normalize': True}
+    encoder_params: {
+      'dinov2_path': 'facebook/dinov2-with-registers-base', 
+      'normalize': true
+      }
     decoder_config_path: 'configs/decoder/ViTXL'
-    pretrained_decoder_path: 'UI_512_FDS_results/stage1/005-RAE/checkpoints/0075000.pt'
-    noise_tau: 0.
-    reshape_to_2d: True
+    #pretrained_decoder_path: '/mnt/hitchcock/scratch/oberon/RAE/UI_512_FDS_results/stage1/005-RAE/checkpoints/0075000.pt'
+    noise_tau: 0.0
+    reshape_to_2d:  true
     # normalization_stat_path: 'models/stats/dinov2/wReg_base/imagenet1k/stat.pt'

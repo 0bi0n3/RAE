@@ -95,7 +95,38 @@ def main(args):
         raise ValueError("Config must provide a stage_1 section.")
 
     rae: RAE = instantiate_from_config(rae_config).to(device)
+
+    # -------------- add checkpoint loading --------------
+    if args.ckpt:
+        if rank == 0:
+            print(f"Loading checkpoint directly from: {args.ckpt}.")
+        checkpoint = torch.load(args.ckpt, map_location=device)
+
+        if "ema" in checkpoint:
+            state_dict = checkpoint["ema"]
+            if rank == 0:
+                print("Using EMA weights from checkpoint.")
+        elif "model" in checkpoint:
+            state_dict = checkpoint["model"]
+            if rank == 0:
+                print("Using MODEL weights from checkpoint.")
+        else:
+            state_dict = checkpoint
+            if rank == 0:
+                print("Using raw state_dict from checkpoint.")
+
+        missing_keys, unexpected_keys = rae.load_state_dict(state_dict, strict=False)
+        if rank == 0:
+            if missing_keys:
+                print(f"Warning: Missing keys during checkpoint load: {missing_keys}.")
+            if unexpected_keys:
+                print(f"Warning: Unexpected keys during checkpoint load: {unexpected_keys}.")
+    else:
+        if rank == 0:
+            print("Warning: No --ckpt provided or readable, reverting to config pretrained decoder.")
+
     rae.eval()
+    # --------------  --------------
 
     transform = transforms.Compose([
         transforms.Lambda(lambda pil_image: center_crop_arr(pil_image, args.image_size)),
@@ -179,5 +210,6 @@ if __name__ == "__main__":
     parser.add_argument("--precision", type=str, choices=["fp32", "bf16"], default="fp32", help="Autocast precision mode.")
     parser.add_argument("--tf32", action=argparse.BooleanOptionalAction, default=True,
                         help="Enable TF32 matmuls (Ampere+). Disable if deterministic results are required.")
+    parser.add_argument("--ckpt", type=str, required=False, help="Path to RAE checkpoint.")
     args = parser.parse_args()
     main(args)
