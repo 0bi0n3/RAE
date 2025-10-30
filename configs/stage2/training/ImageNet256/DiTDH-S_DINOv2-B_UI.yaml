@@ -64,20 +64,22 @@ misc:
 
 training:
   global_seed: 0
-  epochs: 2
+  epochs: 80
   #max_steps: 500
-  global_batch_size: 64
+  global_batch_size: 128
   grad_accum_steps: 1 # change according to your GPU memory
   ema_decay: 0.9995
   num_workers: 4
   log_every: 100
   ckpt_every: 5000
   sample_every: 1000
-  base_lr: 0.0002
-  final_lr: 0.00002
+  base_lr: 1e-5
+  final_lr: 1e-6
   beta: [0.9, 0.95]
   wd: 0.0
   schedule_type: 'linear'
   decay_start_epoch: 40
   decay_end_epoch: 800
   clip_grad: 1.0
+  validate_every: 1000
+  val_batch_size: 32
