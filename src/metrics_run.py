@@ -12,6 +12,7 @@ from glob import glob
 from tqdm import tqdm
 import json
 from pathlib import Path
+from datetime import datetime
 
 ###### Import models
 
@@ -240,13 +241,16 @@ def main():
 
     args = parser.parse_args()
 
-    os.makedirs(args.output_dir, exist_ok=True)
+    timestamp = datetime.now().strftime("%d.%m.%Y-%H:%M:%S")
+    output_dir = args.output_dir + "_" + timestamp
+
+    os.makedirs(output_dir, exist_ok=True)
 
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(message)s',
         handlers=[
-            logging.FileHandler(f"{args.output_dir}/evaluation.log"),
+            logging.FileHandler(f"{output_dir}/evaluation.log"),
             logging.StreamHandler()
         ]
     )
@@ -275,7 +279,7 @@ def main():
         dataloader,
         max_batches=args.max_batches,
         save_samples=args.save_samples,
-        output_dir=args.output_dir if args.save_samples else None
+        output_dir=output_dir if args.save_samples else None
     )
     
     print("\n" + "="*60)
@@ -308,13 +312,13 @@ def main():
         'num_samples': len(stage1_detailed['psnr'])
     }
     
-    with open(f"{args.output_dir}/evaluation_results.json", 'w') as f:
+    with open(f"{output_dir}/evaluation_results.json", 'w') as f:
         json.dump(results, f, indent=2)
 
-    logging.info(f"Results saved to {args.output_dir}/evaluation_results.json")
+    logging.info(f"Results saved to {output_dir}/evaluation_results.json")
 
     if args.save_samples:
-        logging.info(f"Sample images saved to {args.output_dir}/originals/ and {args.output_dir}/reconstructions/")
+        logging.info(f"Sample images saved to {output_dir}/originals/ and {output_dir}/reconstructions/")
 
 if __name__ == "__main__":
     main()

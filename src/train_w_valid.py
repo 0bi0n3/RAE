@@ -34,7 +34,7 @@ from utils.train_utils import parse_configs
 from utils.model_utils import instantiate_from_config
 from utils import wandb_utils
 from utils.optim_utils import build_optimizer, build_scheduler
-
+from datetime import datetime
 
 #################################################################################
 #                             Training Helper Functions                         #
@@ -294,8 +294,9 @@ def main(args):
         model_string_name = model_target.split(".")[-1]
         precision_suffix = f"-{args.precision}" if args.precision == "bf16" else ""
         loss_weight_str = loss_weight if loss_weight is not None else "none"
+        experiment_timestamp = datetime.now().strftime("%d.%m.%Y_%H:%M")
         experiment_name = (
-            f"{experiment_index:03d}-{model_string_name}-"
+            f"{experiment_timestamp}-{experiment_index:03d}-{model_string_name}-"
             f"{path_type}-{prediction}-{loss_weight_str}{precision_suffix}-acc{grad_accum_steps}"
         )
         experiment_dir = os.path.join(args.results_dir, experiment_name)
