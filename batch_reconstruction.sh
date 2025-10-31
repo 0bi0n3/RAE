@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Load .env for WandB
+if [ -f .env ]; then
+    set -a
+    source .env
+    set +a
+fi
+
 python -m torch.distributed.run --standalone --nproc_per_node=2 \
   src/stage1_sample_ddp_with_ckpt.py \
   --config /mnt/hitchcock/scratch/oberon/RAE/configs/stage1/pretrained/DINOv2-B_UI.yaml \

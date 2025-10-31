@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Load .env for WandB
+if [ -f .env ]; then
+    set -a
+    source .env
+    set +a
+fi
+
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export CUDA_LAUNCH_BLOCKING=0
 
